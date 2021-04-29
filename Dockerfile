@@ -10,11 +10,9 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GO111MODULE=on go build -a -o client .
 FROM alpine as server
 WORKDIR /
 COPY --from=builder /workspace/server .
-USER nobody:nobody
 ENTRYPOINT ["/server"]
 
 FROM alpine as client
 WORKDIR /
 COPY --from=builder /workspace/client .
-USER nobody:nobody
 ENTRYPOINT ["/client"]

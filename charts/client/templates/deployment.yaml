@@ -33,9 +33,9 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
           - name: CLUSTER_NAME
-            value: "{{if hasKey .Values "global" }}{{ index .Values "global" "fleet" "clusterLabels" "management.cattle.io/cluster-display-name" }}{{ end }}"
+            value: "{{if hasKey .Values "global" }}{{ index .Values "global" "fleet" "clusterLabels" "management.cattle.io/cluster-display-name" }}{{else}}{{ .Values.env.clusterName }}{{ end }}"
           - name: ENDPOINT
-            value: {{ .Values.env.apiEndpoint }}
+            value: "{{if hasKey .Values "global" }}{{ index .Values "global" "fleet" "clusterLabels" "apiEndpoint" }}{{else}}{{ .Values.env.apiEndpoint }}{{ end }}"
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}

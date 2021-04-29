@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	types "github.com/ibrokethecloud/apidemo/pkg/type"
@@ -54,7 +55,8 @@ func apiCall(endpoint string, randDelay time.Duration, count int, clusterName st
 		return err
 	}
 
-	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(reqByte))
+	patchedEndpoint := patchEndpoint(endpoint)
+	req, err := http.NewRequest("POST", patchedEndpoint, bytes.NewBuffer(reqByte))
 	if err != nil {
 		return err
 	}
@@ -69,4 +71,16 @@ func apiCall(endpoint string, randDelay time.Duration, count int, clusterName st
 	_, err = client.Do(req)
 
 	return err
+}
+
+func patchEndpoint(endpoint string) (patchedEndpoint string) {
+	if !(strings.HasPrefix(endpoint, "https://") && strings.HasPrefix(endpoint, "http://")) {
+		patchedEndpoint = "http://" + endpoint
+	}
+
+	if !strings.HasSuffix(endpoint, "/api") {
+		patchedEndpoint = patchedEndpoint + "/api"
+	}
+
+	return patchedEndpoint
 }
